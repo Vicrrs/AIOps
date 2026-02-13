@@ -1,0 +1,11 @@
+mlflow:
+  tracking_uri: "http://localhost:5000"
+
+paths:
+  artifacts_root: "./artifacts"
+  traffic_log_dir: "./traffic_logs"
+
+serving:
+  vllm_base_url: "http://localhost:8000"
+  gateway_host: "0.0.0.0"
+  gateway_port: 9000
