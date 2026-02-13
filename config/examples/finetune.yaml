@@ -1,0 +1,18 @@
+mode: finetune
+base_model: "mistralai/Mistral-7B-Instruct-v0.2"
+
+data:
+  input_txt: "./docs/doc.txt"
+  sft_jsonl: "./artifacts/sft.jsonl"
+
+training:
+  experiment: "llm-finetune"
+  run_name: "lora-run"
+  out_dir: "./artifacts/lora_out"
+  lr: 2.0e-4
+  batch: 1
+  epochs: 1
+  max_seq_length: 1024
+
+registry:
+  model_name: "my-llm-lora"
