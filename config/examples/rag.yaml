@@ -1,0 +1,11 @@
+mode: rag
+
+data:
+  input_txt: "./docs/doc.txt"
+  rag_dir: "./artifacts/rag_index"
+  chunk_size: 900
+  chunk_overlap: 120
+
+serving:
+  rag_enabled: true
+  rag_dir: "./artifacts/rag_index"
