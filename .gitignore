@@ -3,6 +3,8 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+traffic_logs/
+
 # C extensions
 *.so
 
