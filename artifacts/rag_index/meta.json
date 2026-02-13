@@ -1,0 +1,6 @@
+{
+  "chunk_size": 900,
+  "chunk_overlap": 120,
+  "n_chunks": 5,
+  "type": "tfidf_rag"
+}
