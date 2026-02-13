@@ -1,0 +1,77 @@
+<mxfile host="app.diagrams.net" modified="2026-02-06" agent="ChatGPT" version="22.0.3">
+  <diagram name="LLM MLOps Platform">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Nodes -->
+        <mxCell id="ui" value="UI / API&#10;Escolha da LLM + Estratégia" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="20" y="200" width="260" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="orch" value="Orquestrador&#10;FastAPI / CLI / Python" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1">
+          <mxGeometry x="320" y="200" width="280" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="train" value="Treino / Fine-tuning / LoRA / RAG&#10;HF / PyTorch / NeMo" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="640" y="80" width="320" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="mlflow" value="MLflow&#10;Métricas · Artefatos · Experimentos" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="640" y="220" width="320" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="registry" value="Model Registry&#10;Staging → Production" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="1000" y="200" width="260" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="serving" value="Serving&#10;vLLM / Triton + TensorRT-LLM" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="1320" y="200" width="300" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="obs" value="Observabilidade&#10;Logs · Drift · Latência · Qualidade" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="1320" y="340" width="300" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="feedback" value="Loop de Melhoria Contínua&#10;Dados reais → Novo treino" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1">
+          <mxGeometry x="640" y="360" width="620" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges (SETAS) -->
+        <mxCell id="e1" edge="1" parent="1" source="ui" target="orch" style="endArrow=classic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e2" edge="1" parent="1" source="orch" target="train" style="endArrow=classic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e3" edge="1" parent="1" source="train" target="mlflow" style="endArrow=classic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e4" edge="1" parent="1" source="train" target="registry" style="endArrow=classic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e5" edge="1" parent="1" source="registry" target="serving" style="endArrow=classic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e6" edge="1" parent="1" source="serving" target="obs" style="endArrow=classic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e7" edge="1" parent="1" source="obs" target="feedback" style="endArrow=classic;dashed=1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e8" edge="1" parent="1" source="feedback" target="train" style="endArrow=classic;dashed=1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
