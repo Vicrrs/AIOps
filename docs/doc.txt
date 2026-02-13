@@ -1,0 +1,91 @@
+
+#### O que é [[Docker]] ?
+* O Docker é um software que reduz a complexidade de setup de aplicações;
+* Onde configuramos contêineres, que são como servidores para rodar nossas aplicações;
+* Com facilidade, podemos criar ambientes independentes e que funcionam em diversos OS.
+* E ainda deixar os projetos performáticos.
+
+#### Por que o Docker?
+- O Docker proporciona mais velocidade na configuração do ambiente de um dev;
+- Pouco tempo gasto em manutenção, containers são executados como configurados;
+- Performance para executar aplicação, mais performático que uma VM;
+- Nos livra da Matrix from Hell;
+
+#### Testando o Docker
+* Para rodar um container usamos o comando docker run;
+
+### O que são Contêineres?
+- Um contêiner é um pacote de software com todas as dependências necessárias para executar um aplicativo específico.
+- Contêineres utilizam imagens para poderem ser executados;
+
+### Contêiner x Imagem
+- Imagem e Container são recursos fundamentais do Docker;
+- Imagem é o “projeto” que será executado pelo contêiner, todas as instruções estarão declaradas nela;
+- Container é o Docker rodando uma imagem, consequentemente executando algum código proposto por ela;
+- O fluxo é: Programamos uma imagem e a executamos por meio de um container;
+
+### DOCKER PULL
+
+O comando ```docker pull``` é usado para baixar imagens de contêiner do Docker Hub ou de um registro de contêineres especificado.
+```bash
+docker pull nome_da_imagem[:tag]
+```
+
+```text
+👉🏿 Duvida que tive: Diferença entre docker pull e docker run
+
+- docker pull -> baixa imagens para a sua máquina local.
+- docker run -> cria e inicia contêineres a partir de imagens, e se a imagem não estiver presente localmente, o Docker tentará baixá-la antes de criar o contêiner.
+```
+
+#### Onde encontrar imagens?
+
+* https://hub.docker.com/search?image_filter=official&q=
+* Executamos a imagem de um contêiner com o comando : ```docker run <imagem>```
+
+### Verificando contêineres executados
+* O comando ```docker ps``` ou ```docker container ls``` exibe quais contêineres estão sendo executados no momento;
+* Utilizando a flag **-a** , temos também todos os contêineres já executados na máquina:
+```bash
+docker ps -a
+```
+* Este comando é útil para entender o que está sendo executado e o que esta acontecendo no ambiente.
+
+
+### **Executar container com interação**
+
+- Podemos rodar um container e deixá-lo **executando no terminal;**
+- Vamos utilizar a **flag -it;**
+- Desta maneira **podemos executar comandos disponíveis no container** que estamos utilizando o **docker run;**
+- Podemos utilizar a imagem do ubuntu para isso;
+
+
+### **Container X VM (VIRTUAL MACHINE)**
+
+- **Contêiner é uma aplicação que serve para um determinado fim,** não possui sistema operacional, seu tamanho é de alguns mbs.
+- VM possui sistema operacional próprio, tamanho de gbs, **pode executar diversas funções ao mesmo tempo;**
+- Contêineres acabam gastando menos recursos para serem executados, por causa do seu uso específico;
+- VMs gastam mais recursos, porém podem exercer mais funções;
+
+
+### **Executar container em Background**
+
+- Quando iniciamos um container que persiste, **ele fica ocupando o terminal;**
+- Podemos executar um container em background, para não precisar ficar com diversas abas de terminal aberto, utilizando a **flag -d (deatched);**
+- Verificamos **containers em background com docker ps** também;
+- Podemos utilizar o nginx para este exemplo;
+
+### **Expor Portas**
+
+- Os **containers de docker não tem conexão com nada de fora deles;**
+- Por isso precisamos expor portas, a **flag é a -p** e podemos fazer assim: -p 80:80;
+- Desta maneira **o container estará acessível na porta 80;**
+- Podemos testar o modelo com Nginx!
+
+### Parando Contêineres
+* Podemos para um contêiner com o comando ```docker stop <id ou nome>```
+* Desta maneira estaremos liberando recursos que estão sendo gastos pelo mesmo.
+* Podemos verificar os contêineres rodando com ```docker ps```.
+
+### Iniciando Contêiner
+
