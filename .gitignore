@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 traffic_logs/
+hf_cache/
 
 # C extensions
 *.so
