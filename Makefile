@@ -10,7 +10,7 @@ RAG_DIR ?= ./artifacts/rag_index
 SFT_JSONL ?= ./artifacts/sft.jsonl
 CONFIG_FINETUNE ?= ./config/examples/finetune.yaml
 
-.PHONY: help setup mlflow rag sft train gateway monitor eval drift
+.PHONY: help setup mlflow rag sft train gateway monitor eval drift docker-build up up-core down logs train-docker monitor-docker
 
 help:
 	@echo "Targets:"
@@ -23,6 +23,13 @@ help:
 	@echo "  eval        - run online eval and log to MLflow"
 	@echo "  drift       - run drift job and log to MLflow"
 	@echo "  monitor     - run eval + drift"
+	@echo "  docker-build - build Docker image"
+	@echo "  up          - start MLflow + Gateway + vLLM (GPU profile)"
+	@echo "  up-core     - start MLflow + Gateway only"
+	@echo "  down        - stop Docker services"
+	@echo "  logs        - tail Docker logs"
+	@echo "  train-docker - run training in Docker (GPU profile)"
+	@echo "  monitor-docker - run eval+drift in Docker"
 
 setup:
 	pip install -r requirements.txt
@@ -63,3 +70,26 @@ drift:
 	$(PY) monitoring/drift_job.py
 
 monitor: eval drift
+
+DOCKER_COMPOSE ?= docker compose
+
+docker-build:
+	$(DOCKER_COMPOSE) build
+
+up:
+	$(DOCKER_COMPOSE) --profile gpu up -d mlflow gateway vllm
+
+up-core:
+	$(DOCKER_COMPOSE) up -d mlflow gateway
+
+down:
+	$(DOCKER_COMPOSE) down
+
+logs:
+	$(DOCKER_COMPOSE) logs -f --tail=200
+
+train-docker:
+	$(DOCKER_COMPOSE) --profile train run --rm training
+
+monitor-docker:
+	$(DOCKER_COMPOSE) --profile monitor run --rm monitor
