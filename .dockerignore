@@ -1,0 +1,14 @@
+.git
+.env
+__pycache__
+*.py[codz]
+.venv
+venv
+.envrc
+mlruns
+mlflow_db
+traffic_logs
+artifacts/rag_index
+hf_cache
+*.parquet
+*.lock
