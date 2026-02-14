@@ -1,0 +1,115 @@
+services:
+  mlflow:
+    image: llm-mlops:latest
+    build: .
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --allowed-hosts "mlflow,mlflow:5000,localhost,localhost:5000,127.0.0.1,127.0.0.1:5000"
+      --cors-allowed-origins "http://localhost:5000,http://127.0.0.1:5000"
+      --backend-store-uri sqlite:///./mlflow_db/mlflow.db
+      --default-artifact-root ./mlruns
+    ports:
+      - "${MLFLOW_PORT:-5000}:5000"
+    volumes:
+      - ./mlruns:/app/mlruns
+      - ./mlflow_db:/app/mlflow_db
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway:
+    image: llm-mlops:latest
+    build: .
+    command: >
+      uvicorn serving.gateway:app --host 0.0.0.0 --port 9000
+    ports:
+      - "${GATEWAY_PORT:-9000}:9000"
+    environment:
+      VLLM_BASE_URL: ${VLLM_BASE_URL:-http://vllm:8000}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI:-http://mlflow:5000}
+      MLFLOW_EXPERIMENT: ${MLFLOW_EXPERIMENT:-llm-serving}
+      MODEL_ID: ${MODEL_ID:-base-model}
+      MODEL_VERSION: ${MODEL_VERSION:-dev}
+      RAG_DIR: ${RAG_DIR:-/app/artifacts/rag_index}
+      RAG_TOP_K: ${RAG_TOP_K:-4}
+      TRAFFIC_LOG_DIR: ${TRAFFIC_LOG_DIR:-/app/traffic_logs}
+      GATEWAY_TOKEN: ${GATEWAY_TOKEN:-changeme}
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./traffic_logs:/app/traffic_logs
+    depends_on:
+      - mlflow
+
+  vllm:
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:latest}
+    profiles: ["gpu"]
+    command:
+      [
+        "--model",
+        "${VLLM_MODEL:-mistralai/Mistral-7B-Instruct-v0.2}",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--max-model-len",
+        "${VLLM_MAX_MODEL_LEN:-2048}",
+        "--gpu-memory-utilization",
+        "${VLLM_GPU_UTIL:-0.75}"
+      ]
+    ports:
+      - "${VLLM_PORT:-8000}:8000"
+    environment:
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
+    volumes:
+      - ./hf_cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+
+  training:
+    image: llm-mlops:latest
+    build: .
+    profiles: ["train"]
+    command: >
+      python training/finetune_lora.py --config ${CONFIG_FINETUNE:-/app/config/examples/finetune.yaml}
+    environment:
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI:-http://mlflow:5000}
+      MLFLOW_EXPERIMENT: ${MLFLOW_EXPERIMENT:-llm-training}
+    volumes:
+      - ./config:/app/config
+      - ./artifacts:/app/artifacts
+      - ./mlruns:/app/mlruns
+      - ./mlflow_db:/app/mlflow_db
+      - ./hf_cache:/root/.cache/huggingface
+    depends_on:
+      - mlflow
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+
+  monitor:
+    image: llm-mlops:latest
+    build: .
+    profiles: ["monitor"]
+    command: >
+      python monitoring/online_eval.py && python monitoring/drift_job.py
+    environment:
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI:-http://mlflow:5000}
+      MLFLOW_EXPERIMENT: ${MLFLOW_EXPERIMENT:-llm-monitoring}
+      TRAFFIC_LOG_DIR: ${TRAFFIC_LOG_DIR:-/app/traffic_logs}
+    volumes:
+      - ./traffic_logs:/app/traffic_logs
+    depends_on:
+      - mlflow
